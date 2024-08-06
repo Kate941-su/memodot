@@ -1,0 +1,25 @@
+@startuml
+
+' State machine
+[*] --> Initialize
+Initialize -> Main
+Main --> Edit
+Edit --> Main
+
+Main --> FilePick
+FilePick --> Main
+
+
+' Descriptin
+Initialize : - feach data from the app DB
+Initialize : - load settings from app storage cache
+
+Main : - Show folders and files separately
+Main : - Import a `.md` file from a storage
+Main : - Export created `.md` file for a storage
+Main : - (In the future) sharing feature
+Main : - Add files or folders
+
+Edit : - Auto saving
+
+@enduml
