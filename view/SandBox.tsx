@@ -91,7 +91,7 @@ const SandBoxScreen: React.FC<Props> = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   searchBar: {
-    marginVertical: 10
+    marginVertical: 24
   },
   gridView: {
     marginTop: 10,
