@@ -2,11 +2,16 @@ import { StatusBar } from 'expo-status-bar';
 import { TailwindProvider } from 'tailwindcss-react-native';
 import { Provider } from 'react-redux'
 import { store } from './app/store'
-import { Counter, HomeScreen } from './view/index';
+import {
+  Counter,
+  HomeScreen,
+  SandBoxScreen
+} from './view/index';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { RootStackParamList } from './Router';
 
-const Stack = createNativeStackNavigator()
+const Stack = createNativeStackNavigator<RootStackParamList>()
 
 export default function App() {
   return (
@@ -15,13 +20,17 @@ export default function App() {
         <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen
+              name="SandBoxScreen"
+              component={SandBoxScreen}
+            />
+            <Stack.Screen
+              name="HomeScreen"
+              component={HomeScreen}
+            />
+            <Stack.Screen
               name="Counter"
               component={Counter}
               options={{}}
-            />
-            <Stack.Screen
-              name="Home"
-              component={HomeScreen}
             />
           </Stack.Navigator>
         </NavigationContainer>

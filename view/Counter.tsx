@@ -15,6 +15,8 @@ import {
 import { IconButton } from '../components/IconButton';
 import TextButton from '../components/TextButton';
 import { RootState } from "../app/store";
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../Router';
 
 
 /* Example of custom hook. To be honest you can define a custom hook with logic. */
@@ -23,7 +25,19 @@ const useIncrementByAmount = (init: string) => {
   return { incrementAmountByHook, setIncrementAmountByHook }
 }
 
-const Counter: React.FC = (navigation) => {
+type Props = NativeStackScreenProps<RootStackParamList, 'Counter', 'counter'>
+
+const Counter: React.FC<Props> = ({ navigation, route }) => {
+
+  // Go another screen with params.
+  const goHome = () => {
+    navigation.navigate('Counter', {
+      initCount: 0
+    })
+  }
+
+  const param = route.params.initCount
+
   /* Defining a dispatcher */
   const dispatch = useAppDispatch()
 
