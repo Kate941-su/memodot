@@ -10,8 +10,11 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './Router';
+import EditScreen from './view/EditScreen';
+import { Button, } from 'react-native'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
+
 
 export default function App() {
   return (
@@ -19,6 +22,20 @@ export default function App() {
       <TailwindProvider>
         <NavigationContainer>
           <Stack.Navigator>
+            <Stack.Screen
+              name="EditScreen"
+              component={EditScreen}
+              options={{
+                headerLeft: () => (
+                  <Button
+                    onPress={() => alert('This is a button!')}
+                    title="Info"
+                    color="#ff0000"
+                  />
+                ),
+                title: 'Hello',
+              }}
+            />
             <Stack.Screen
               name="SandBoxScreen"
               component={SandBoxScreen}
@@ -32,8 +49,12 @@ export default function App() {
             <Stack.Screen
               name="Counter"
               component={Counter}
-              options={{}}
+              options={{
+
+              }}
             />
+
+
           </Stack.Navigator>
         </NavigationContainer>
       </TailwindProvider>

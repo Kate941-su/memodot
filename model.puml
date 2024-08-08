@@ -1,0 +1,21 @@
+@startuml
+class Folder {
+ createdAt: int
+ updatedAt: int
+ folder: Folder
+ mdFile: MDFile
+ method1()
+ method2()
+}
+
+class MDFile {
+  createdAt: int
+  updatedAt: int
+  content: string
+}
+
+MDFile }-- Folder
+Folder }-- Folder
+
+@enduml
+
