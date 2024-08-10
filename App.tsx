@@ -4,13 +4,12 @@ import { Provider } from 'react-redux'
 import { store } from './app/store'
 import {
   Counter,
-  HomeScreen,
-  SandBoxScreen
-} from './view/index';
+  SandBoxScreen,
+  EditScreen,
+} from './screen/index';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './Router';
-import EditScreen from './view/EditScreen';
 import { Button, } from 'react-native'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
@@ -26,24 +25,12 @@ export default function App() {
               name="EditScreen"
               component={EditScreen}
               options={{
-                headerLeft: () => (
-                  <Button
-                    onPress={() => alert('This is a button!')}
-                    title="Info"
-                    color="#ff0000"
-                  />
-                ),
-                title: 'Hello',
+                headerShown: false,
               }}
             />
             <Stack.Screen
               name="SandBoxScreen"
               component={SandBoxScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="HomeScreen"
-              component={HomeScreen}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -53,8 +40,6 @@ export default function App() {
 
               }}
             />
-
-
           </Stack.Navigator>
         </NavigationContainer>
       </TailwindProvider>

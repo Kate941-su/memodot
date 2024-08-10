@@ -12,6 +12,7 @@
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
     "@reduxjs/toolkit": "^2.2.7",
+    "eslint": "^8.57.0",
     "exlint": "^0.1.6",
     "expo": "~51.0.24",
     "expo-status-bar": "~1.12.1",
