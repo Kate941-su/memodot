@@ -16,8 +16,11 @@ const EditScreen: React.FC<EditScreenProps> = ({ navigation, route }) => {
   const dispatch = useDispatch()
   const isPreview = useAppSelector((select) => select.editor.isPreview)
 
+  const param = route.params.editId
+
   return (
     <EditView
+      id={param}
       onChangeIsPreview={(isPreview) => {
         dispatch(setIsPreview(isPreview))
       }}
@@ -33,11 +36,12 @@ const EditScreen: React.FC<EditScreenProps> = ({ navigation, route }) => {
 
 type EditViewProps = {
   children: React.ReactNode;
+  id: number
   onChangeIsPreview: (isPreview: boolean) => void;
   onTapBackButton: VoidFunction;
 }
 
-const EditView: React.FC<EditViewProps> = ({ children, onChangeIsPreview, onTapBackButton }) => {
+const EditView: React.FC<EditViewProps> = ({ children, onChangeIsPreview, onTapBackButton, id }) => {
 
   const isPreview = useAppSelector((select) => select.editor.isPreview)
 
@@ -48,7 +52,7 @@ const EditView: React.FC<EditViewProps> = ({ children, onChangeIsPreview, onTapB
           console.log("back button tapped")
           onTapBackButton()
         }} />
-        <Appbar.Content title={isPreview ? "Preview" : 'Editor'} />
+        <Appbar.Content title={isPreview ? "Preview" : `Editor (id = ${id})`} />
         <Appbar.Action
           icon="eye"
           color={!isPreview ? 'gray' : 'black'}

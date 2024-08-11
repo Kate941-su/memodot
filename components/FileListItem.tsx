@@ -6,12 +6,17 @@ import { Button } from 'react-native-paper'
 
 type Props = {
   memodotFile: MemodotFile,
+  onPressedMemodotFile: (memodotFile: MemodotFile) => void
 }
 
-const FileListItem: React.FC<Props> = ({ memodotFile }) => {
+const FileListItem: React.FC<Props> = ({ memodotFile, onPressedMemodotFile }) => {
   return (
     <Pressable
-      onPress={() => { console.log(`${memodotFile.id} is tapped`) }}
+      onPress={() => {
+        console.log(`${memodotFile.id} is tapped`)
+        onPressedMemodotFile(memodotFile)
+      }
+      }
     >
       <View style={[styles.container]}>
         <View style={styles.alignContainer}>
