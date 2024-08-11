@@ -1,4 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
 import { TailwindProvider } from 'tailwindcss-react-native';
 import { Provider } from 'react-redux'
 import { store } from './app/store'
@@ -10,7 +9,7 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './Router';
-import { Button, } from 'react-native'
+import HomeScreen from './screen/homeScreen/HomeScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
@@ -21,6 +20,13 @@ export default function App() {
       <TailwindProvider>
         <NavigationContainer>
           <Stack.Navigator>
+            <Stack.Screen
+              name="HomeScreen"
+              component={HomeScreen}
+              options={{
+                headerShown: true
+              }}
+            />
             <Stack.Screen
               name="EditScreen"
               component={EditScreen}

@@ -1,18 +1,12 @@
 @startuml
-class Folder {
- createdAt: int
- updatedAt: int
- folder: Folder
- mdFile: MDFile
- method1()
- method2()
-}
-
-class MDFile {
-  id: int
+class MemodotFile {
+  id: int?
   createdAt: int
   updatedAt: int
-  content: string
+  isFolder: boolean
+  text: string?
+  method1()
+  method2()
 }
 
 MDFile }-- Folder

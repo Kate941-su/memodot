@@ -4,3 +4,5 @@ export type RootStackParamList = {
   SandBoxScreen: undefined;
   EditScreen: { editId: number };
 };
+
+

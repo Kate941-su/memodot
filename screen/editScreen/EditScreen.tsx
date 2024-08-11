@@ -5,13 +5,13 @@ import { useDispatch } from 'react-redux';
 import { useAppSelector } from '../../app/hooks';
 import { setIsPreview } from '../../slicers/editor/editorSlice';
 import { Editor, Preview } from './components';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../Router';
 
-type EditViewProps = {
-  children: React.ReactNode;
-  onChangeIsPreview: (isPreview: boolean) => void;
-}
 
-const EditScreen: React.FC = () => {
+type EditScreenProps = NativeStackScreenProps<RootStackParamList, 'EditScreen'>
+
+const EditScreen: React.FC<EditScreenProps> = ({ navigation, route }) => {
 
   const dispatch = useDispatch()
   const isPreview = useAppSelector((select) => select.editor.isPreview)
@@ -21,6 +21,9 @@ const EditScreen: React.FC = () => {
       onChangeIsPreview={(isPreview) => {
         dispatch(setIsPreview(isPreview))
       }}
+      onTapBackButton={() => {
+        navigation.navigate('HomeScreen')
+      }}
     >
       {isPreview && <Preview />}
       {!isPreview && <Editor />}
@@ -28,7 +31,13 @@ const EditScreen: React.FC = () => {
   )
 }
 
-const EditView: React.FC<EditViewProps> = ({ children, onChangeIsPreview }) => {
+type EditViewProps = {
+  children: React.ReactNode;
+  onChangeIsPreview: (isPreview: boolean) => void;
+  onTapBackButton: VoidFunction;
+}
+
+const EditView: React.FC<EditViewProps> = ({ children, onChangeIsPreview, onTapBackButton }) => {
 
   const isPreview = useAppSelector((select) => select.editor.isPreview)
 
@@ -37,6 +46,7 @@ const EditView: React.FC<EditViewProps> = ({ children, onChangeIsPreview }) => {
       <Appbar.Header>
         <Appbar.BackAction onPress={() => {
           console.log("back button tapped")
+          onTapBackButton()
         }} />
         <Appbar.Content title={isPreview ? "Preview" : 'Editor'} />
         <Appbar.Action
