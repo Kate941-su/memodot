@@ -24,7 +24,7 @@ export default function App() {
               name="HomeScreen"
               component={HomeScreen}
               options={{
-                headerShown: true
+                headerShown: false
               }}
             />
             <Stack.Screen

@@ -5,6 +5,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../Router';
 import { FlatGrid } from 'react-native-super-grid';
 import FileListItem from '../../components/FileListItem';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useDispatch } from 'react-redux';
 
 // TODO: Implement go back to parent folder
 
@@ -14,11 +16,19 @@ type SortType = 'acendant' | 'decendant' | 'folderFirstAcendant' | 'fileFirstDec
 
 const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
 
+  const dispatch = useDispatch()
+
   const [items, setItems] = useState<MemodotFile[]>(initialList);
 
   const [search, setSearch] = useState("");
 
   const [sortType, setSortType] = useState<SortType>("folderFirstAcendant")
+
+  const insets = useSafeAreaInsets()
+
+  const goToNextFolder = () => {
+    
+  }
 
   const updateSearch = (search: string) => {
     setSearch(search);
@@ -65,7 +75,14 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{
+      flex: 1,
+      paddingTop: insets.top,
+      paddingBottom: insets.bottom,
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    }}>
+
       <Searchbar
         style={styles.searchBar}
         placeholder="Type Here..."
