@@ -7,6 +7,9 @@ import { FlatGrid } from 'react-native-super-grid';
 import FileListItem from '../../components/FileListItem';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
+import { useAppSelector } from '../../app/hooks';
+import { selectCurrentFile } from '../../slicers/homeScreen/homeScreenSlice';
+
 
 // TODO: Implement go back to parent folder
 
@@ -18,7 +21,9 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const dispatch = useDispatch()
 
-  const [items, setItems] = useState<MemodotFile[]>(initialList);
+  const currentFolder = useAppSelector(selectCurrentFile)
+
+  const [items, setItems] = useState<MemodotFile[]>(currentFolder?.children!);
 
   const [search, setSearch] = useState("");
 
@@ -27,7 +32,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   const insets = useSafeAreaInsets()
 
   const goToNextFolder = () => {
-    
+
   }
 
   const updateSearch = (search: string) => {
@@ -37,7 +42,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const showUpItems = (word: string) => {
     setItems(
-      initialList
+      currentFolder.children!
         .filter(
           (it) =>
             ((it: MemodotFile): boolean => {
@@ -70,8 +75,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const onTapFolderItem = (memodotFile: MemodotFile) => {
     // TODO: Get item's ids and convert to memodotFiles
-    const ids = memodotFile.childrenIdList
-    setItems(dummyChildItem)
+    setItems(memodotFile.children!)
   }
 
   return (
@@ -82,6 +86,10 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
       justifyContent: 'space-between',
       alignItems: 'center',
     }}>
+      <View>
+        {process.env.FLAVOR == "DEV" && <Text>`${currentFolder.id}`</Text>}
+      </View>
+
 
       <Searchbar
         style={styles.searchBar}
@@ -135,121 +143,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-
-const dummyChildItem = [
-
-  {
-    id: 83,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    isFolder: false,
-    fileName: "id_83",
-    text: "Hello id 83",
-    parentFolderId: 1
-  },
-  {
-    id: 942,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    fileName: "id_942",
-    isFolder: true,
-    childrenIdList: [] as number[],
-    parentFolderId: 1
-  },
-  {
-    id: 1340,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    isFolder: false,
-    fileName: "id_942",
-    text: "Hello id 942",
-    parentFolderId: 1
-  },
-]
-
-const initialList = [
-  {
-    id: 1,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    fileName: "id_1",
-    isFolder: true,
-    parentFolderid: 1,
-    childrenIdList: [] as number[],
-  },
-  {
-    id: 2,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    fileName: "id_2",
-    isFolder: true,
-    childrenIdList: [] as number[],
-  },
-  {
-    id: 3,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    isFolder: false,
-    fileName: "id_3",
-    text: "Hello id 3",
-  },
-  {
-    id: 4,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    fileName: "id_4",
-    isFolder: true,
-    childrenIdList: [] as number[],
-  },
-  {
-    id: 5,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    fileName: "id_5",
-    isFolder: true,
-    childrenIdList: [] as number[],
-  },
-  {
-    id: 6,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    isFolder: false,
-    fileName: "id_6",
-    text: "Hello id 6",
-  },
-  {
-    id: 7,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    isFolder: false,
-    fileName: "id_7",
-    text: "Hello id 7",
-  },
-  {
-    id: 8,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    isFolder: false,
-    fileName: "id_8",
-    text: "Hello id 8",
-  },
-  {
-    id: 9,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    fileName: "id_9",
-    isFolder: true,
-    childrenIdList: [] as number[],
-  },
-  {
-    id: 10,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    isFolder: false,
-    fileName: "id_10",
-    text: "Hello id 10",
-  },
-]
-
 
 export default HomeScreen

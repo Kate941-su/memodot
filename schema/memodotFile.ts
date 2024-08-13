@@ -6,5 +6,6 @@ type MemodotFile = {
   parentFolderId?: number;
   fileName: string;
   text?: string;
-  childrenIdList?: number[];
+  children?: MemodotFile[];
+  isRootFolder: boolean;
 };
