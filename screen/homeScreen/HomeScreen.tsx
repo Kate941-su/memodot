@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Searchbar } from 'react-native-paper';
 import { View, Text, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -8,7 +8,10 @@ import FileListItem from '../../components/FileListItem';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '../../app/hooks';
-import { selectCurrentFile } from '../../slicers/homeScreen/homeScreenSlice';
+import { goNext, selectCurrentFile } from '../../slicers/homeScreen/homeScreenSlice';
+import { Appbar } from 'react-native-paper';
+import { RootState } from '../../app/store';
+import { useSelector } from 'react-redux';
 
 
 // TODO: Implement go back to parent folder
@@ -21,9 +24,16 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const dispatch = useDispatch()
 
-  const currentFolder = useAppSelector(selectCurrentFile)
+  const currentStack = useAppSelector((state: RootState) => state.homeScreenState)
 
-  const [items, setItems] = useState<MemodotFile[]>(currentFolder?.children!);
+  const currentFolder = currentStack?.stack.top!
+
+  // Sample of how to use `useMemo`
+  // const selector = useMemo(
+  //   () => (state: RootState) => state.homeScreenState.stack)
+  // const idList = useSelector(selector)
+
+  const [items, setItems] = useState<MemodotFile[]>(currentFolder.children!);
 
   const [search, setSearch] = useState("");
 
@@ -31,9 +41,9 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const insets = useSafeAreaInsets()
 
-  const goToNextFolder = () => {
-
-  }
+  useEffect(() => {
+    console.log(`[HomeScreen] Current folder 👉 ${currentFolder.fileName}`)
+  }, [currentStack])
 
   const updateSearch = (search: string) => {
     setSearch(search);
@@ -52,6 +62,15 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
             })(it)
         )
     )
+  }
+
+
+  const getPath = () => {
+    var path: string = ""
+    currentStack.stack.asList.forEach((it) => {
+      '/' + path + it.fileName
+    })
+    return path
   }
 
   const sortSeparateFileAndFolders = (itemList: MemodotFile[], isFolderFirst: boolean = true) => {
@@ -75,22 +94,25 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const onTapFolderItem = (memodotFile: MemodotFile) => {
     // TODO: Get item's ids and convert to memodotFiles
-    setItems(memodotFile.children!)
+    dispatch(goNext(memodotFile))
   }
 
   return (
-    <View style={{
-      flex: 1,
-      paddingTop: insets.top,
-      paddingBottom: insets.bottom,
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    }}>
-      <View>
-        {process.env.FLAVOR == "DEV" && <Text>`${currentFolder.id}`</Text>}
+    <View style={styles.container}>
+      <View style={styles.appBar}>
+        <Appbar.Header>
+          <Appbar.BackAction onPress={() => {
+            console.log("back button tapped")
+          }} />
+          <Appbar.Content title={getPath()} />
+          <Appbar.Action
+            icon="eye"
+            color={'black'}
+            onPress={() => {
+              console.log("preview show")
+            }} />
+        </Appbar.Header>
       </View>
-
-
       <Searchbar
         style={styles.searchBar}
         placeholder="Type Here..."
@@ -122,7 +144,6 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
               memodotFile.isFolder ?
                 (() => {
                   onTapFolderItem(item)
-                  console.log('Open folder is about to come to soon')
                 })() :
                 navigation.navigate('EditScreen', { editId: memodotFile.id! })
             }}
@@ -134,6 +155,15 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  appBar: {
+    width: '100%',
+    flexShrink: 1
+  },
   searchBar: {
     marginVertical: 12,
     marginHorizontal: 12,

@@ -10,6 +10,10 @@ export const store = configureStore({
     editor: editorReducer,
     homeScreenState: homeScreenStateReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
 // Infer the type of `store`

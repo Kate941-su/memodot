@@ -3,10 +3,16 @@ import { View, StyleSheet } from "react-native"
 import { useAppDispatch, useAppSelector } from "../../../app/hooks"
 import { RootState } from "../../../app/store";
 import { selectText, setText } from "../../../slicers/editor/editorSlice"
+import { useEffect } from "react";
 
 const Editor: React.FC = () => {
   const dispatch = useAppDispatch()
   const text = useAppSelector((state: RootState) => state.editor.text)
+
+  useEffect(() => {
+    console.log('[Editor] state is mutated')
+  }, [text])
+
   return (
     <View style={style.container}>
       <TextInput

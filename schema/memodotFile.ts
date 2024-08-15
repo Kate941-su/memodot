@@ -1,5 +1,5 @@
 type MemodotFile = {
-  id?: number;
+  id: number;
   createdAt: number;
   updatedAt: number;
   isFolder: boolean;
