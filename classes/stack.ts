@@ -9,7 +9,7 @@ interface IStack<T> {
 class CustomStack<T> implements IStack<T> {
   private storage: T[] = [];
 
-  constructor(initItemList?: [T]) {
+  constructor(initItemList?: T[]) {
     if (initItemList != undefined && initItemList!.length > 0) {
       initItemList.forEach((it) => {
         this.storage.push(it);

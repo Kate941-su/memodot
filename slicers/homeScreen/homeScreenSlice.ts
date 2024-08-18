@@ -158,7 +158,9 @@ export const homeScreenStateSlice = createSlice({
   initialState,
   reducers: {
     goNext: (state, action: PayloadAction<MemodotFile>) => {
-      state.stack.push(action.payload);
+      const newStack = new CustomStack<MemodotFile>(state.stack.asList);
+      newStack.push(action.payload);
+      state.stack = newStack;
       console.log(
         `[homescreenSlice] Current stack is 👉 ${state.stack.asList.map(
           (it) => it.fileName
@@ -167,9 +169,16 @@ export const homeScreenStateSlice = createSlice({
     },
 
     gotBack: (state) => {
-      const popedFile = state.stack.pop();
+      const newStack = new CustomStack<MemodotFile>(state.stack.asList);
+      const popedFile = newStack.pop();
       console.log(`Poped file id 👉 ${popedFile?.id}`);
+      console.log(
+        `[homescreenSlice] Current stack is 👉 ${state.stack.asList.map(
+          (it) => it.fileName
+        )}`
+      );
       console.log(`Next file id 👉 ${state.stack.top?.id}`);
+      state.stack = newStack;
     },
   },
 });

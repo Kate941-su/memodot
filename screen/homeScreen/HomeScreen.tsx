@@ -8,7 +8,7 @@ import FileListItem from '../../components/FileListItem';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '../../app/hooks';
-import { goNext, selectCurrentFile } from '../../slicers/homeScreen/homeScreenSlice';
+import { goNext, gotBack, selectCurrentFile } from '../../slicers/homeScreen/homeScreenSlice';
 import { Appbar } from 'react-native-paper';
 import { RootState } from '../../app/store';
 import { useSelector } from 'react-redux';
@@ -24,16 +24,14 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const dispatch = useDispatch()
 
-  const currentStack = useAppSelector((state: RootState) => state.homeScreenState)
+  const currentStack = useAppSelector((state: RootState) => state.homeScreenState.stack)
 
-  const currentFolder = currentStack?.stack.top!
+  const [children, setChildren] = useState<MemodotFile[] | undefined>(currentStack.top!.children)
 
   // Sample of how to use `useMemo`
   // const selector = useMemo(
   //   () => (state: RootState) => state.homeScreenState.stack)
   // const idList = useSelector(selector)
-
-  const [items, setItems] = useState<MemodotFile[]>(currentFolder.children!);
 
   const [search, setSearch] = useState("");
 
@@ -42,7 +40,12 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   const insets = useSafeAreaInsets()
 
   useEffect(() => {
-    console.log(`[HomeScreen] Current folder 👉 ${currentFolder.fileName}`)
+    setChildren(currentStack.top?.children)
+    console.log(`[HomeScreen] Current folder 👉 ${currentStack.top?.fileName}`)
+    console.log("Children filename 👇 ")
+    children!.forEach((item) => {
+      console.log(`${item.fileName}`)
+    })
   }, [currentStack])
 
   const updateSearch = (search: string) => {
@@ -51,8 +54,8 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const showUpItems = (word: string) => {
-    setItems(
-      currentFolder.children!
+    setChildren(
+      children!
         .filter(
           (it) =>
             ((it: MemodotFile): boolean => {
@@ -67,7 +70,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const getPath = () => {
     var path: string = ""
-    currentStack.stack.asList.forEach((it) => {
+    currentStack.asList.forEach((it) => {
       '/' + path + it.fileName
     })
     return path
@@ -102,6 +105,12 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
       <View style={styles.appBar}>
         <Appbar.Header>
           <Appbar.BackAction onPress={() => {
+            // TODO: Defining how to detect where I am locating on by using id
+            if (currentStack.top?.id != 0) {
+              dispatch(gotBack())
+            } else {
+              console.log("Current direcotory is already 'ROOT'")
+            }
             console.log("back button tapped")
           }} />
           <Appbar.Content title={getPath()} />
@@ -125,13 +134,13 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
           // TODO: Implement all features
           switch (sortType) {
             case 'acendant':
-              return sortSeparateFileAndFolders(items)
+              return sortSeparateFileAndFolders(children!)
             case 'decendant':
-              return items
+              return children!
             case 'folderFirstAcendant':
-              return sortSeparateFileAndFolders(items)
+              return sortSeparateFileAndFolders(children!)
             case 'fileFirstDecendant':
-              return items
+              return children!
           }
         })()
         }
