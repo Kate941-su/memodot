@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { Searchbar } from 'react-native-paper';
 import { View, Text, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -12,6 +12,7 @@ import { goNext, gotBack, selectCurrentFile } from '../../slicers/homeScreen/hom
 import { Appbar } from 'react-native-paper';
 import { RootState } from '../../app/store';
 import { useSelector } from 'react-redux';
+import ActionSheet, { ActionSheetRef, SheetProvider } from "react-native-actions-sheet";
 
 
 // TODO: Implement go back to parent folder
@@ -39,13 +40,11 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const insets = useSafeAreaInsets()
 
+  const actionSheetRef = useRef<ActionSheetRef>(null)
+
   useEffect(() => {
     setChildren(currentStack.top?.children)
     console.log(`[HomeScreen] Current folder 👉 ${currentStack.top?.fileName}`)
-    console.log("Children filename 👇 ")
-    children!.forEach((item) => {
-      console.log(`${item.fileName}`)
-    })
   }, [currentStack])
 
   const updateSearch = (search: string) => {
@@ -55,13 +54,13 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const showUpItems = (word: string) => {
     setChildren(
-      children!
+      currentStack?.top?.children!
         .filter(
           (it) =>
-            ((it: MemodotFile): boolean => {
+            ((item: MemodotFile): boolean => {
               const lowerWord = word.toLowerCase()
               return word.length === 0 ||
-                it.fileName.includes(lowerWord)
+                item.fileName.includes(lowerWord)
             })(it)
         )
     )
@@ -71,8 +70,9 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   const getPath = () => {
     var path: string = ""
     currentStack.asList.forEach((it) => {
-      '/' + path + it.fileName
+      path += '/' + it.fileName
     })
+    console.log(`Current path 👉 ${path}`)
     return path
   }
 
@@ -101,65 +101,75 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.appBar}>
-        <Appbar.Header>
-          <Appbar.BackAction onPress={() => {
-            // TODO: Defining how to detect where I am locating on by using id
-            if (currentStack.top?.id != 0) {
-              dispatch(gotBack())
-            } else {
-              console.log("Current direcotory is already 'ROOT'")
-            }
-            console.log("back button tapped")
-          }} />
-          <Appbar.Content title={getPath()} />
-          <Appbar.Action
-            icon="eye"
-            color={'black'}
-            onPress={() => {
-              console.log("preview show")
+    <SheetProvider context='global'>
+      <View style={styles.container}>
+        <View style={styles.appBar}>
+          <Appbar.Header>
+            <Appbar.BackAction onPress={() => {
+              // TODO: Defining how to detect where I am locating on by using id
+              if (currentStack.top?.id != 0) {
+                dispatch(gotBack())
+              } else {
+                console.log("Current direcotory is already 'ROOT'")
+              }
+              console.log("back button tapped")
             }} />
-        </Appbar.Header>
-      </View>
-      <Searchbar
-        style={styles.searchBar}
-        placeholder="Type Here..."
-        onChangeText={updateSearch}
-        value={search}
-      />
-      <FlatGrid
-        itemDimension={Number.MAX_VALUE}
-        data={(() => {
-          // TODO: Implement all features
-          switch (sortType) {
-            case 'acendant':
-              return sortSeparateFileAndFolders(children!)
-            case 'decendant':
-              return children!
-            case 'folderFirstAcendant':
-              return sortSeparateFileAndFolders(children!)
-            case 'fileFirstDecendant':
-              return children!
+            <Appbar.Content title={getPath()} />
+          </Appbar.Header>
+        </View>
+        <Searchbar
+          style={styles.searchBar}
+          placeholder="Type Here..."
+          onChangeText={updateSearch}
+          value={search}
+        />
+        <FlatGrid
+          itemDimension={Number.MAX_VALUE}
+          data={(() => {
+            // TODO: Implement all features
+            switch (sortType) {
+              case 'acendant':
+                return sortSeparateFileAndFolders(children!)
+              case 'decendant':
+                return children!
+              case 'folderFirstAcendant':
+                return sortSeparateFileAndFolders(children!)
+              case 'fileFirstDecendant':
+                return children!
+            }
+          })()
           }
-        })()
-        }
-        style={styles.gridView}
-        spacing={10}
-        renderItem={({ item }) => (
-          <FileListItem
-            memodotFile={item}
-            onPressedMemodotFile={(memodotFile) => {
-              memodotFile.isFolder ?
-                (() => {
-                  onTapFolderItem(item)
-                })() :
-                navigation.navigate('EditScreen', { editId: memodotFile.id! })
-            }}
-          ></FileListItem>
-        )}
-      />
-    </View>
+          style={styles.gridView}
+          spacing={10}
+          renderItem={({ item }) => (
+            <FileListItem
+              memodotFile={item}
+              onPressedMemodotFile={(memodotFile) => {
+                memodotFile.isFolder ?
+                  (() => {
+                    onTapFolderItem(item)
+                  })() :
+                  navigation.navigate('EditScreen', { editId: memodotFile.id! })
+              }}
+              onPressedMenuFile={
+                (memodotFile) => {
+                  actionSheetRef.current?.show()
+                }
+              }
+            ></FileListItem>
+          )}
+        />
+        <ActionSheet ref={actionSheetRef}>
+          <View style={styles.bottomSheet}>
+            <Text>Hi, I am Kitaya1</Text>
+            <Text>Hi, I am Kitaya2</Text>
+            <Text>Hi, I am Kitaya3</Text>
+            <Text>Hi, I am Kitaya4</Text>
+            <Text>Hi, I am Kitaya5</Text>
+          </View>
+        </ActionSheet>
+      </View>
+    </SheetProvider>
   );
 };
 
@@ -181,6 +191,9 @@ const styles = StyleSheet.create({
     marginTop: 0,
     flex: 1,
   },
+  bottomSheet: {
+    padding: 8
+  }
 });
 
 export default HomeScreen

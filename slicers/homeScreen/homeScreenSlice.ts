@@ -180,6 +180,17 @@ export const homeScreenStateSlice = createSlice({
       console.log(`Next file id 👉 ${state.stack.top?.id}`);
       state.stack = newStack;
     },
+
+    delete: (state, action: PayloadAction<number>) => {
+      const newChildren = state.stack.top?.children?.filter((it) => {
+        if (it.id != action.payload) {
+          console.log(`Deleted file 👉 ${it.fileName}`);
+        }
+        return it.id != action.payload;
+      });
+      const newStack = new CustomStack<MemodotFile>(newChildren);
+      state.stack = newStack;
+    },
   },
 });
 

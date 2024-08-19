@@ -7,9 +7,10 @@ import { Button } from 'react-native-paper'
 type Props = {
   memodotFile: MemodotFile,
   onPressedMemodotFile: (memodotFile: MemodotFile) => void
+  onPressedMenuFile: (memodotFIle: MemodotFile) => void
 }
 
-const FileListItem: React.FC<Props> = ({ memodotFile, onPressedMemodotFile }) => {
+const FileListItem: React.FC<Props> = ({ memodotFile, onPressedMemodotFile, onPressedMenuFile }) => {
   return (
     <Pressable
       onPress={() => {
@@ -33,9 +34,8 @@ const FileListItem: React.FC<Props> = ({ memodotFile, onPressedMemodotFile }) =>
           color='black'
           backgroundColor='#00000000'
           onPress={() => {
-            console.log(`${memodotFile.fileName} menu pressed
-              
-              `)
+            console.log(`${memodotFile.fileName} menu pressed`)
+            onPressedMenuFile(memodotFile)
           }
           }
         />
